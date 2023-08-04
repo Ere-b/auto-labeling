@@ -2,7 +2,9 @@ import os
 import sys
 import cv2
 import glob
+import numpy as np
 from weapons import Weapon
+from show_window_with_rect import show_window_with_rect
 
 def auto_labeling(image_path, class_index, index, total_count):
   """
@@ -20,10 +22,11 @@ def auto_labeling(image_path, class_index, index, total_count):
   image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
   
   # 전 처리
-  threshold_value = 215 
-  image[image >= threshold_value] = 255
-  _, binary_image = cv2.threshold(image, 220, 255, cv2.THRESH_BINARY_INV)
-  # _, binary_image = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+  _, binary_image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+  
+  # 모폴로지 연산에 사용할 커널 정의
+  kernel = np.ones((5, 5), np.uint8)
+  binary_image= cv2.morphologyEx(binary_image, cv2.MORPH_CLOSE, kernel)
   
   # 객체의 외곽선 검출
   contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
