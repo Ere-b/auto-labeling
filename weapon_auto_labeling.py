@@ -67,8 +67,8 @@ def auto_labeling_batch(directory_path, class_index):
   Directory내의 모든 이미지 파일을 입력받아 auto_labeling()으로 파일 경로를 전달해주는 Function
 
   Args:
-      directory_path (_type_): directory path
-      class_index (_type_): class_index
+    directory_path (_type_): directory path
+    class_index (_type_): class_index
   """
   # 디렉토리 내의 모든 이미지 파일 경로를 리스트로 저장
   image_files = glob.glob(os.path.join(directory_path, "*.jpg"))
@@ -84,21 +84,22 @@ def auto_labeling_batch(directory_path, class_index):
       print(f"Failed to read the image file: {image_path}")
 
 # 예제 이미지에 대한 레이블 정보를 생성
+
 while True:
-  class_index = input("Select class index(1. c_knife 2. knife 3. pistol 4. gun 5. unknown 6 uzi 7. empty):")
-  if class_index == 1:
+  class_index = int(input("Select class index(0. c_knife 1. knife 2. pistol 3. gun 4. unknown 5 uzi 6. empty): "))
+  if class_index == 0:
     auto_labeling_batch("./64_half_test", Weapon.c_knife.value)
-  elif class_index == 2:
+  elif class_index == 1:
     auto_labeling_batch("./64_half_test", Weapon.knife.value)
-  elif class_index == 3:
+  elif class_index == 2:
     auto_labeling_batch("./64_half_test", Weapon.pistol.value)
-  elif class_index == 4:
+  elif class_index == 3:
     auto_labeling_batch("./64_half_test", Weapon.gun.value)
-  elif class_index == 5:
+  elif class_index == 4:
     auto_labeling_batch("./64_half_test", Weapon.unknown.value)
-  elif class_index == 6:
+  elif class_index == 5:
     auto_labeling_batch("./64_half_test", Weapon.uzi.value)
-  elif class_index == 7:
+  elif class_index == 6:
     auto_labeling_batch("./64_half_test", Weapon.empty.value)
   else:
     print("잘못된 입력입니다. 다시 입력해주세요.")
