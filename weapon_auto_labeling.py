@@ -1,6 +1,7 @@
 import os
 import cv2
 import glob
+from weapons import Weapon
 
 def auto_labeling(image_path, class_index, index, total_count):
   """
@@ -21,7 +22,7 @@ def auto_labeling(image_path, class_index, index, total_count):
   threshold_value = 215 
   image[image >= threshold_value] = 255
   _, binary_image = cv2.threshold(image, 220, 255, cv2.THRESH_BINARY_INV)
-  # binary_image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 15, 2)
+  # _, binary_image = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
   
   # 객체의 외곽선 검출
   contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -31,13 +32,6 @@ def auto_labeling(image_path, class_index, index, total_count):
 
   # 경계 상자를 사각형으로 그리기
   image_with_rect = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-  
-  # 생성된 이미지 파일을 화면에 표시
-  cv2.rectangle(image_with_rect, (x, y), (x + w, y + h), (0, 0, 255), 1)
-  cv2.imshow(image_path, image_with_rect)
-  cv2.namedWindow(image_path, cv2.WINDOW_NORMAL)
-  cv2.resizeWindow(image_path, 640, 480)
-  cv2.waitKey(0)
 
   # 그린 rectangle의 중심 좌표값과 폭, 높이 계산
   x_center = x + w // 2
@@ -55,20 +49,19 @@ def auto_labeling(image_path, class_index, index, total_count):
   # .txt 파일로 저장
   txt_filename = image_path.replace(".jpg", ".txt")
   txt_filename = txt_filename.replace("64_half_test", "64_half_test_label")
-  
   try:
     with open(txt_filename, "w") as f:
         f.write(
             f"{class_index} {x_center_relative} {y_center_relative} {width_relative} {height_relative}"
         )
-    print(f"레이블 정보를 생성합니다. 이미지 경로: {image_path} count: {index} / {total_count}")
+    print(f"레이블 정보를 생성 class index: {class_index} 진행률: {(index/total_count)*100:.1f}%")
   except FileNotFoundError as e:
     print("파일을 찾을 수 없습니다:", e)
   except PermissionError as e:
     print("파일에 쓸 권한이 없습니다:", e)
   except OSError as e:
     print("파일 작업 중 오류가 발생했습니다:", e)
-
+    
 def auto_labeling_batch(directory_path, class_index):
   """
   Directory내의 모든 이미지 파일을 입력받아 auto_labeling()으로 파일 경로를 전달해주는 Function
@@ -77,9 +70,12 @@ def auto_labeling_batch(directory_path, class_index):
       directory_path (_type_): directory path
       class_index (_type_): class_index
   """
+  # 디렉토리 내의 모든 이미지 파일 경로를 리스트로 저장
   image_files = glob.glob(os.path.join(directory_path, "*.jpg"))
+  # 전체 이미지 파일의 개수
   total_count= len(image_files)
   
+  # 디렉토리 내의 모든 이미지 파일에 대해 auto_labeling() 호출
   for index ,image_path in enumerate(image_files, start=1):
     image = cv2.imread(image_path)
     if image is not None:
@@ -88,6 +84,21 @@ def auto_labeling_batch(directory_path, class_index):
       print(f"Failed to read the image file: {image_path}")
 
 # 예제 이미지에 대한 레이블 정보를 생성
-# 1. c_knife 2. knife 3. pistol 4. gun 5. unknown 6 uzi 7. empty
-auto_labeling_batch("./64_half_test", 0)
-
+while True:
+  class_index = input("Select class index(1. c_knife 2. knife 3. pistol 4. gun 5. unknown 6 uzi 7. empty):")
+  if class_index == 1:
+    auto_labeling_batch("./64_half_test", Weapon.c_knife.value)
+  elif class_index == 2:
+    auto_labeling_batch("./64_half_test", Weapon.knife.value)
+  elif class_index == 3:
+    auto_labeling_batch("./64_half_test", Weapon.pistol.value)
+  elif class_index == 4:
+    auto_labeling_batch("./64_half_test", Weapon.gun.value)
+  elif class_index == 5:
+    auto_labeling_batch("./64_half_test", Weapon.unknown.value)
+  elif class_index == 6:
+    auto_labeling_batch("./64_half_test", Weapon.uzi.value)
+  elif class_index == 7:
+    auto_labeling_batch("./64_half_test", Weapon.empty.value)
+  else:
+    print("잘못된 입력입니다. 다시 입력해주세요.")
