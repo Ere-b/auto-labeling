@@ -1,4 +1,5 @@
 import os
+import sys
 import cv2
 import glob
 from weapons import Weapon
@@ -84,22 +85,27 @@ def auto_labeling_batch(directory_path, class_index):
       print(f"Failed to read the image file: {image_path}")
 
 # 예제 이미지에 대한 레이블 정보를 생성
-
+directory_path = "./64_half_test"
 while True:
-  class_index = int(input("Select class index(0. c_knife 1. knife 2. pistol 3. gun 4. unknown 5 uzi 6. empty): "))
-  if class_index == 0:
-    auto_labeling_batch("./64_half_test", Weapon.c_knife.value)
-  elif class_index == 1:
-    auto_labeling_batch("./64_half_test", Weapon.knife.value)
-  elif class_index == 2:
-    auto_labeling_batch("./64_half_test", Weapon.pistol.value)
-  elif class_index == 3:
-    auto_labeling_batch("./64_half_test", Weapon.gun.value)
-  elif class_index == 4:
-    auto_labeling_batch("./64_half_test", Weapon.unknown.value)
-  elif class_index == 5:
-    auto_labeling_batch("./64_half_test", Weapon.uzi.value)
-  elif class_index == 6:
-    auto_labeling_batch("./64_half_test", Weapon.empty.value)
-  else:
+  try:
+    class_index = int(input("Select class index(0. c_knife 1. knife 2. pistol 3. gun 4. unknown 5 uzi 6. empty) 99 to quit: "))
+    if class_index == Weapon.c_knife.value:
+      auto_labeling_batch(directory_path, Weapon.c_knife.value)
+    elif class_index == Weapon.knife.value:
+      auto_labeling_batch(directory_path, Weapon.knife.value)
+    elif class_index == Weapon.pistol.value:
+      auto_labeling_batch(directory_path, Weapon.pistol.value)
+    elif class_index == Weapon.gun.value:
+      auto_labeling_batch(directory_path, Weapon.gun.value)
+    elif class_index == Weapon.unknown.value:
+      auto_labeling_batch(directory_path, Weapon.unknown.value)
+    elif class_index == Weapon.uzi.value:
+      auto_labeling_batch(directory_path, Weapon.uzi.value)
+    elif class_index == Weapon.empty.value:
+      auto_labeling_batch(directory_path, Weapon.empty.value)
+    elif class_index == 99:
+      sys.exit()
+    else:
+      print("잘못된 입력입니다. 다시 입력해주세요.")
+  except ValueError:
     print("잘못된 입력입니다. 다시 입력해주세요.")
