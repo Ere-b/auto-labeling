@@ -1,6 +1,6 @@
 import cv2
 
-def show_window(image_with_rect, image_path, x, y, w, h):
+def show_window_with_rect(image_with_rect, image_path, x, y, w, h):
   """
   객체가 감지된 이미지를 보여주는 Function
 
@@ -16,4 +16,4 @@ def show_window(image_with_rect, image_path, x, y, w, h):
   cv2.namedWindow(image_path, cv2.WINDOW_NORMAL)
   cv2.resizeWindow(image_path, 640, 480)
   cv2.waitKey(0)
-  cv2.distroyAllWindows()
+  cv2.destroyAllWindows()
